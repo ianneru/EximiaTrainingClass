@@ -2,9 +2,8 @@
 
 namespace HttpService.Dominio.Entidades
 {
-    public class Endereco
+    public class Endereco : Entity
     {
-        public int Id { get; set; }
         public required string Cep { get; set; }
         public required string Numero { get; set; }
         public required string Logradouro { get; set; }

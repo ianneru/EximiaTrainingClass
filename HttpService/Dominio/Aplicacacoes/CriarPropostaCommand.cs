@@ -1,33 +1,30 @@
+using HttpService.Dominio.Entidades;
 using HttpService.Dominio.Enumeradores;
 
 namespace EscolaEximia.HttpService.Handlers;
 
 public class CriarPropostaCommand
 {
-    private string CpfAgente { get; set; }
-    private string CpfCliente { get; set; }
+    public string CpfAgente { get; set; }
+    public string CpfCliente { get; set; }
     private string Telefone { get; set; }
     private string Email { get; set; }
-    private string Cep { get; set; }
-    private string Numero { get; set; }
-    private string Logradouro { get; set; }
-    private string? Complemento { get; set; }
-    private UfEnum Uf { get; set; }
-    private string Cidade { get; set; }
+    public Rendimento Rendimento { get; set; }
 
-    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep, string Numero,
-            string Logradouro, string? Complemento, string Cidade, UfEnum Uf)
+    public Endereco Endereco { get; set; }
+    public string CodigoOperacao { get; set; }
+    public string CodigoConvenio { get; set; }
+
+    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, Endereco Endereco,
+         Rendimento RendimentoModel,string codigoOperacao, string codigoConvenio)
     {
         this.CpfAgente = CpfAgente;
         this.CpfCliente = CpfCliente;
         this.Telefone = Telefone;
         this.Email = Email;
-        this.Cep = Cep;
-        this.Telefone = Telefone;
-        this.Numero = Numero;
-        this.Logradouro = Logradouro;
-        this.Complemento = Complemento;
-        this.Uf = Uf;
-        this.Cidade = Cidade;
+        this.Endereco = Endereco;
+        this.CodigoOperacao = codigoOperacao;
+        this.CodigoConvenio = codigoConvenio;
+        Rendimento = RendimentoModel;
     }
 }

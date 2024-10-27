@@ -1,12 +1,13 @@
 ﻿namespace HttpService.Dominio.Entidades
 {
-    public class Cliente
+    public class Cliente : Entity
     {
-        public required string Id { get; set; }
-        public required string Cpf { get; set; }
-        public required int IdEndereco { get; set; }
+        public string Cpf { get; set; }
+        public Guid IdEndereco { get; set; }
         public Endereco Endereco { get; set; }
-        public int IdRendimento { get; set; }
+        public Guid IdRendimento { get; set; }
         public Rendimento Rendimento { get; set; }
+
+        public bool Ativo { get; set; }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace HttpService.Dominio.Entidades
 {
-    public class Agente
+    public class Agente : Entity
     {
-        public string Id { get; set; }  
-
         public string Cpf { get; set; }
 
         public bool Ativo { get; set; }

@@ -1,9 +1,7 @@
 ﻿namespace HttpService.Dominio.Entidades
 {
-    public class Rendimento
+    public class Rendimento : Entity
     {
-        public int IdRendimento { get; set; } 
-        
         public string Banco { get; set; }
 
         public string Agencia { get; set; }
