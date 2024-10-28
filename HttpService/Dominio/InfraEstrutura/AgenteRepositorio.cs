@@ -22,7 +22,7 @@ public sealed class AgenteRepositorio(
 
     public async Task<Maybe<Agente>> ObterPorCpf(string cpf)
     {
-
+        return await dbContext.Agentes.FirstOrDefaultAsync(o => o.Cpf == cpf) ?? Maybe<Agente>.None;
     } 
 
     public async Task Adicionar(Proposta proposta, CancellationToken cancellationToken)

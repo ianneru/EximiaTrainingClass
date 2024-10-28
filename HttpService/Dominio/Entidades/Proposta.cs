@@ -13,7 +13,6 @@ namespace HttpService.Dominio.Entidades
 
 
         public Cliente Cliente { get; set; }
-        public Endereco Endereco { get; set; }
 
         public Agente Agente { get; set; }
 
@@ -46,10 +45,11 @@ namespace HttpService.Dominio.Entidades
 
             var proposta = new Proposta
             {
-                IdAgente = Agente.Id,
+                IdAgente = Agente.Value.Id,
                 IdEndereco = Endereco.Id,
                 IdCliente = Cliente.Id,
                 IdOperacao = Operacao.Id,
+                IdConvenio = Convenio.Id
                 Id = Guid.NewGuid()
             };
 

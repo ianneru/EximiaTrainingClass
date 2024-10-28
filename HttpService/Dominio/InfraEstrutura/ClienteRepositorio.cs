@@ -20,9 +20,14 @@ public sealed class ClienteRepositorio(
         return result == cpf;
     }
 
-    public async Task Adicionar(Proposta proposta, CancellationToken cancellationToken)
+    public async Task<Maybe<Cliente>> ObterPorCpf(string cpf)
     {
-        await dbContext.Propostas.AddAsync(proposta, cancellationToken);
+        return await dbContext.Clientes.FirstOrDefaultAsync(o => o.Cpf == cpf) ?? Maybe<Cliente>.None;
+    }
+
+    public async Task Adicionar(Cliente Cliente, CancellationToken cancellationToken)
+    {
+        await dbContext.Clientes.AddAsync(Cliente, cancellationToken);
     }
 
     public Task Save()

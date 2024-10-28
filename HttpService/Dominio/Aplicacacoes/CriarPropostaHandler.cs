@@ -32,11 +32,22 @@ public class CriarPropostaHandler
 
         var convenioRecuperado = await _convenioRepositorio.ObterPorCodigo(command.CodigoConvenio);
 
-        var agenteRecuperado = await _agenteRepositorio.ObterPorCodigo(command.CodigoConvenio);
+        var clienteRecuperado = await _clienteRepositorio.ObterPorCpf(command.CpfCliente);
+        if (clienteRecuperado.HasNoValue)
+        {
+            var clienteRecuperado = Cliente.Criar(command.Cliente);
+        }
+
+        
+        var enderecoRecuperado = await _convenioRepositorio.ObterPorCodigo(command.CodigoConvenio);
+
+        var agenteRecuperado = await _agenteRepositorio.ObterPorCpf(command.CpfAgente);
 
         var convenios =  await _convenioRepositorio.ObterTodos();
 
-        var propostaResult = Proposta.Criar(command.Cliente,command.Endereco,command.,
+        var propostaResult = Proposta.Criar(command.Cliente,
+            command.Endereco,
+            agenteRecuperado,
             new Operacao { 
                 Codigo = command.CodigoOperacao, 
                 Valor = command.ValorOperacao

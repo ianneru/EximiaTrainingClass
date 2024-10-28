@@ -7,9 +7,6 @@ public class CriarPropostaCommand
 {
     public string CpfAgente { get; set; }
     public string CpfCliente { get; set; }
-    public Rendimento Rendimento { get; set; }
-
-    public Endereco Endereco { get; set; }
 
     public Cliente Cliente { get; set; }
     public string CodigoOperacao { get; set; }
@@ -19,22 +16,31 @@ public class CriarPropostaCommand
     public decimal ValorOperacao { get; }
     public Proposta Proposta { get; set; }
 
-    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, Endereco EnderecoModel,
-         Rendimento RendimentoModel,string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,decimal ValorOperacao,DateTime DataNascimento)
+    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep,string Numero,string Logradouro,string Cidade,UfEnum Uf,
+        string Complemento,string Agencia,string Banco,string NumeroConta, decimal ValorRendimento, string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,
+        decimal ValorOperacao,DateTime DataNascimento)
     {
         this.CpfAgente = CpfAgente;
         this.Cliente = new Cliente
         {
-            Cpf = CpfCliente ,
+            Cpf = CpfCliente,
             Telefone = Telefone,
             Email = Email,
-            DataNascimento = DataNascimento
+            DataNascimento = DataNascimento,
+            Cep = Cep,
+            Cidade = Cidade,
+            Numero = Numero,
+            Logradouro = Logradouro,
+            Uf  = Uf,
+            Agencia = Agencia,
+            Banco = Banco,
+            NumeroConta = NumeroConta,
+            Complemento = Complemento,
+            ValorRendimento = ValorRendimento
         };
         this.CpfCliente = CpfCliente;
-        Endereco = EnderecoModel;
         this.CodigoOperacao = CodigoOperacao;
         this.CodigoConvenio = CodigoConvenio;
-        Rendimento = RendimentoModel;
         this.PrazoEmMeses = PrazoEmMeses;
         this.ValorOperacao = ValorOperacao;
     }
