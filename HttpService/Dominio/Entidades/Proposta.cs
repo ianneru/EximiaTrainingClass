@@ -22,13 +22,13 @@ namespace HttpService.Dominio.Entidades
         public bool Ativo { get; set; }
 
 
-        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,string CpfAgente, Operacao Operacao,Maybe<Convenio> Convenio,ICollection<Convenio> Convenios)
+        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,Maybe<Agente> Agente, Operacao Operacao,Maybe<Convenio> Convenio,ICollection<Convenio> Convenios)
         {
             if(Cliente is null) return Result.Failure<Proposta>("Cliente inválido");
             if (Endereco is null) return Result.Failure<Proposta>("Endereço inválido");
-            if (CpfAgente is null) return Result.Failure<Proposta>("Agente inválido");
+            if (Agente.HasNoValue) return Result.Failure<Proposta>("Agente inválido");
             if (Operacao is null) return Result.Failure<Proposta>("Operacao inválido");
-            if (!Convenio.HasValue) return Result.Failure<Proposta>("Convenio inválido");
+            if (Convenio.HasNoValue) return Result.Failure<Proposta>("Convenio inválido");
 
             var validacoes = new List<IValidacaoProposta>
             {
@@ -39,12 +39,19 @@ namespace HttpService.Dominio.Entidades
 
             foreach (var validacao in validacoes)
             {
-                var resultado = validacao.Validar(Cliente, Endereco,CpfAgente, Operacao, Convenio,Convenios);
+                var resultado = validacao.Validar(Cliente, Endereco, Agente, Operacao, Convenio,Convenios);
                 if (resultado.IsFailure)
                     return Result.Failure<Proposta>(resultado.Error);
             }
 
-            var proposta = new Proposta();
+            var proposta = new Proposta
+            {
+                IdAgente = Agente.Id,
+                IdEndereco = Endereco.Id,
+                IdCliente = Cliente.Id,
+                IdOperacao = Operacao.Id,
+                Id = Guid.NewGuid()
+            };
 
             return Result.Success(proposta);
         }
@@ -52,12 +59,12 @@ namespace HttpService.Dominio.Entidades
 
     public interface IValidacaoProposta
     {
-        Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios);
+        Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios);
     }
 
     public class ValidacaoConveniadaREFIN : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
             if (!Convenio.Value.AceitaREFIN && Operacao.Codigo == "REFIN")
                 return Result.Failure("Conveniada não aceita REFIN.");
@@ -67,7 +74,7 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoRestricaoConvenios : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
             if (Convenio.Value.ConvenioRestricoes is null && Convenio.Value.ConvenioRestricoes.Any(restricao => restricao.Uf == Endereco.Uf && Operacao.Valor > restricao.Valor))
                 return Result.Failure("Conveniada não aceita REFIN.");
@@ -77,7 +84,7 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoQuantidadeParcelasMaiorQue80AnosCliente : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
             var dataPrazoEmMeses = DateTime.Now.AddMonths((int)Operacao.PrazoEmMeses);
 

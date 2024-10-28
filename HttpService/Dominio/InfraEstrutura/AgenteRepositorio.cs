@@ -20,6 +20,11 @@ public sealed class AgenteRepositorio(
         return result == cpf;
     }
 
+    public async Task<Maybe<Agente>> ObterPorCpf(string cpf)
+    {
+
+    } 
+
     public async Task Adicionar(Proposta proposta, CancellationToken cancellationToken)
     {
         await dbContext.Propostas.AddAsync(proposta, cancellationToken);
