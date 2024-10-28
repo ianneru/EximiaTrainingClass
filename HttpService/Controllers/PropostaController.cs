@@ -13,7 +13,7 @@ namespace HttpService.Controllers
 
         public record EnderecoModel(string Cep, string Numero,string Logradouro, string Complemento,string Cidade, UfEnum Uf);
         public record NovaPropostaModel(string CpfAgente, string CpfCliente, string Telefone, string Email, EnderecoModel Endereco,
-            RendimentoModel Rendimento,string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,decimal ValorOperacao,DateTime DataNascimento);
+            RendimentoModel Rendimento,string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,decimal ValorOperacao,TipoOperacaoEnum TipoOperacao, DateTime DataNascimento);
 
         public async Task<IActionResult> CriarProposta([FromBody] NovaPropostaModel input,
         [FromServices] CriarPropostaHandler handler,
@@ -38,7 +38,8 @@ namespace HttpService.Controllers
                 input.CodigoConvenio,
                 input.PrazoEmMeses,
                 input.ValorOperacao,
-                input.DataNascimento);
+                input.DataNascimento,
+                input.TipoOperacao);
 
             var result = await handler.Handle(command, cancellationToken);
 

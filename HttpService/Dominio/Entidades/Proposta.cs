@@ -6,7 +6,6 @@ namespace HttpService.Dominio.Entidades
     public class Proposta : Entity
     {
         public Guid IdCliente { get; set; }
-        public Guid IdEndereco { get; set; }
         public Guid IdAgente { get; set; }
 
         public Guid IdOperacao { get; set; }
@@ -16,17 +15,22 @@ namespace HttpService.Dominio.Entidades
 
         public Agente Agente { get; set; }
 
-        public Operacao Operacao { get; set; }
+        public TipoOperacaoEnum TipóOperacao { get; set; }
+
+        public string CodigoOperacao { get; set; }
+
+        public decimal Valor { get; set; }
+
+        public int PrazoEmMeses { get; set; }
 
         public bool Ativo { get; set; }
 
 
-        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,Maybe<Agente> Agente, Operacao Operacao,Maybe<Convenio> Convenio,ICollection<Convenio> Convenios)
+        public static Result<Proposta> Criar(Maybe<Cliente> cliente,Maybe<Agente> agente, TipoOperacaoEnum tipoOperacao,decimal valorOperacao, string codigoOperacao, 
+            int prazoEmMeses,Maybe<Convenio> Convenio,ICollection<Convenio> Convenios)
         {
-            if(Cliente is null) return Result.Failure<Proposta>("Cliente inválido");
-            if (Endereco is null) return Result.Failure<Proposta>("Endereço inválido");
-            if (Agente.HasNoValue) return Result.Failure<Proposta>("Agente inválido");
-            if (Operacao is null) return Result.Failure<Proposta>("Operacao inválido");
+            if (cliente.HasNoValue) return Result.Failure<Proposta>("Cliente inválido");
+            if (agente.HasNoValue) return Result.Failure<Proposta>("Agente inválido");
             if (Convenio.HasNoValue) return Result.Failure<Proposta>("Convenio inválido");
 
             var validacoes = new List<IValidacaoProposta>
@@ -38,7 +42,7 @@ namespace HttpService.Dominio.Entidades
 
             foreach (var validacao in validacoes)
             {
-                var resultado = validacao.Validar(Cliente, Endereco, Agente, Operacao, Convenio,Convenios);
+                var resultado = validacao.Validar(cliente, agente,tipoOperacao,valorOperacao,codigoOperacao,prazoEmMeses,Convenio,Convenios);
                 if (resultado.IsFailure)
                     return Result.Failure<Proposta>(resultado.Error);
             }
@@ -46,10 +50,8 @@ namespace HttpService.Dominio.Entidades
             var proposta = new Proposta
             {
                 IdAgente = Agente.Value.Id,
-                IdEndereco = Endereco.Id,
-                IdCliente = Cliente.Id,
-                IdOperacao = Operacao.Id,
-                IdConvenio = Convenio.Id
+                IdCliente = cliente.Value.Id,
+                IdOperacao = Operacao.Value.Id,
                 Id = Guid.NewGuid()
             };
 
@@ -59,14 +61,16 @@ namespace HttpService.Dominio.Entidades
 
     public interface IValidacaoProposta
     {
-        Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios);
+        Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+            int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios);
     }
 
     public class ValidacaoConveniadaREFIN : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+            int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
-            if (!Convenio.Value.AceitaREFIN && Operacao.Codigo == "REFIN")
+            if (!Convenio.Value.AceitaREFIN && codigoOperacao == "REFIN")
                 return Result.Failure("Conveniada não aceita REFIN.");
             return Result.Success();
         }
@@ -74,9 +78,11 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoRestricaoConvenios : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+            int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
-            if (Convenio.Value.ConvenioRestricoes is null && Convenio.Value.ConvenioRestricoes.Any(restricao => restricao.Uf == Endereco.Uf && Operacao.Valor > restricao.Valor))
+            if (Convenio.Value.ConvenioRestricoes is null && 
+                Convenio.Value.ConvenioRestricoes.Any(restricao => restricao.Uf == Cliente.Value.Uf && valorOperacao > restricao.Valor))
                 return Result.Failure("Conveniada não aceita REFIN.");
             return Result.Success();
         }
@@ -84,13 +90,14 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoQuantidadeParcelasMaiorQue80AnosCliente : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, Maybe<Agente> Agente, Operacao Operacao, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+            int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
-            var dataPrazoEmMeses = DateTime.Now.AddMonths((int)Operacao.PrazoEmMeses);
+            var dataPrazoEmMeses = DateTime.Now.AddMonths(prazoEmMeses);
 
-            var dataDiferencaAnos = dataPrazoEmMeses.Year - Cliente.DataNascimento.Year;
+            var dataDiferencaAnos = dataPrazoEmMeses.Year - Cliente.Value.DataNascimento.Year;
 
-            if(Cliente.DataNascimento.AddYears(dataDiferencaAnos).Year > 79)
+            if(Cliente.Value.DataNascimento.AddYears(dataDiferencaAnos).Year > 79)
                 return Result.Failure("Idade do prononente não pode ser superior que 80 anos na última parcela.");
 
             return Result.Success();

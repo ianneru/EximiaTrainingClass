@@ -9,10 +9,8 @@ namespace HttpService.Dominio
 
         public DbSet<Proposta> Propostas { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
-        public DbSet<Endereco> Enderecos { get; set; }
-        public DbSet<Rendimento> Rendimentos { get; set; }
         public DbSet<Agente> Agentes { get; set; }
-
+        public DbSet<Operacao> Operacoes { get; set; }
         public DbSet<Convenio> Convenios { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {

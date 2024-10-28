@@ -30,28 +30,30 @@ public class CriarPropostaHandler
         if (await _agenteRepositorio.AgenteAtivo(command.CpfAgente))
             return Result.Failure<Proposta>("Agente deve estar ativo");
 
-        var convenioRecuperado = await _convenioRepositorio.ObterPorCodigo(command.CodigoConvenio);
 
         var clienteRecuperado = await _clienteRepositorio.ObterPorCpf(command.CpfCliente);
         if (clienteRecuperado.HasNoValue)
         {
-            var clienteRecuperado = Cliente.Criar(command.Cliente);
+            var novoClienteResult = Cliente.Criar(command.Cliente);
+            await _clienteRepositorio.Adicionar(novoClienteResult.Value, cancellationToken);
+            await _clienteRepositorio.Save();
+
+            if (novoClienteResult.IsFailure)
+                return Result.Failure<Proposta>(novoClienteResult.Error);
+
+            clienteRecuperado = novoClienteResult.Value;
         }
 
-        
-        var enderecoRecuperado = await _convenioRepositorio.ObterPorCodigo(command.CodigoConvenio);
-
         var agenteRecuperado = await _agenteRepositorio.ObterPorCpf(command.CpfAgente);
-
         var convenios =  await _convenioRepositorio.ObterTodos();
+        var convenioRecuperado = await _convenioRepositorio.ObterPorCodigo(command.CodigoConvenio);
 
-        var propostaResult = Proposta.Criar(command.Cliente,
-            command.Endereco,
+        var propostaResult = Proposta.Criar(clienteRecuperado,
             agenteRecuperado,
-            new Operacao { 
-                Codigo = command.CodigoOperacao, 
-                Valor = command.ValorOperacao
-            },
+            command.TipoOperacaoEnum,
+            command.ValorOperacao,
+            command.CodigoOperacao,
+            command.PrazoEmMeses,
             convenioRecuperado,
             convenios
            );

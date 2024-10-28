@@ -12,13 +12,15 @@ public class CriarPropostaCommand
     public string CodigoOperacao { get; set; }
     public string CodigoConvenio { get; set; }
 
-    public string PrazoEmMeses { get; set; }
+    public int PrazoEmMeses { get; set; }
     public decimal ValorOperacao { get; }
+
+    public TipoOperacaoEnum TipoOperacaoEnum { get; }
     public Proposta Proposta { get; set; }
 
     public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep,string Numero,string Logradouro,string Cidade,UfEnum Uf,
-        string Complemento,string Agencia,string Banco,string NumeroConta, decimal ValorRendimento, string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,
-        decimal ValorOperacao,DateTime DataNascimento)
+        string Complemento,string Agencia,string Banco,string NumeroConta, decimal ValorRendimento, string CodigoOperacao, string CodigoConvenio, int PrazoEmMeses,
+        decimal ValorOperacao,DateTime DataNascimento,TipoOperacaoEnum tipoOperacaoEnum)
     {
         this.CpfAgente = CpfAgente;
         this.Cliente = new Cliente
@@ -43,5 +45,6 @@ public class CriarPropostaCommand
         this.CodigoConvenio = CodigoConvenio;
         this.PrazoEmMeses = PrazoEmMeses;
         this.ValorOperacao = ValorOperacao;
+        this.TipoOperacaoEnum = tipoOperacaoEnum;
     }
 }
