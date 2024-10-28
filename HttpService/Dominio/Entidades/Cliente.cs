@@ -5,26 +5,27 @@ namespace HttpService.Dominio.Entidades
 {
     public class Cliente : Entity
     {
-        public string Cpf { get; set; }
-        public string Email { get; set; }
-        public string Telefone { get; set; }
-        public DateTime DataNascimento { get; set; }
+        public required string Cpf { get; set; }
+        public required string Email { get; set; }
+        public required string Telefone { get; set; }
+        public required DateTime DataNascimento { get; set; }
         public required string Cep { get; set; }
         public required string Numero { get; set; }
         public required string Logradouro { get; set; }
+
+        public required string Bairro { get; set; }
         public string? Complemento { get; set; }
         public required UfEnum Uf { get; set; }
         public required string Cidade { get; set; }
-        public string Banco { get; set; }
+        public required string Banco { get; set; }
 
-        public string Agencia { get; set; }
+        public required string Agencia { get; set; }
 
-        public string NumeroConta { get; set; }
+        public required string NumeroConta { get; set; }
 
-        public decimal ValorRendimento { get; set; }
+        public required decimal ValorRendimento { get; set; }
 
         public bool Ativo { get; set; }
-
 
         public static Result<Cliente> Criar(Maybe<Cliente> Cliente)
         {
@@ -39,6 +40,7 @@ namespace HttpService.Dominio.Entidades
                 Cep = Cliente.Value.Cep,
                 Numero = Cliente.Value.Numero,
                 Logradouro = Cliente.Value.Logradouro,
+                Bairro = Cliente.Value.Bairro,
                 Complemento = Cliente.Value.Complemento,
                 Uf = Cliente.Value.Uf,
                 Cidade = Cliente.Value.Cidade,

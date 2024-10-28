@@ -8,16 +8,11 @@ namespace HttpService.Dominio.Entidades
         public Guid IdCliente { get; set; }
         public Guid IdAgente { get; set; }
 
-        public Guid IdOperacao { get; set; }
-
-
         public Cliente Cliente { get; set; }
 
         public Agente Agente { get; set; }
 
-        public TipoOperacaoEnum TipóOperacao { get; set; }
-
-        public string CodigoOperacao { get; set; }
+        public TipoOperacaoEnum TipoOperacao { get; set; }
 
         public decimal Valor { get; set; }
 
@@ -26,7 +21,7 @@ namespace HttpService.Dominio.Entidades
         public bool Ativo { get; set; }
 
 
-        public static Result<Proposta> Criar(Maybe<Cliente> cliente,Maybe<Agente> agente, TipoOperacaoEnum tipoOperacao,decimal valorOperacao, string codigoOperacao, 
+        public static Result<Proposta> Criar(Maybe<Cliente> cliente,Maybe<Agente> agente, TipoOperacaoEnum tipoOperacao,decimal valorOperacao,
             int prazoEmMeses,Maybe<Convenio> Convenio,ICollection<Convenio> Convenios)
         {
             if (cliente.HasNoValue) return Result.Failure<Proposta>("Cliente inválido");
@@ -42,16 +37,20 @@ namespace HttpService.Dominio.Entidades
 
             foreach (var validacao in validacoes)
             {
-                var resultado = validacao.Validar(cliente, agente,tipoOperacao,valorOperacao,codigoOperacao,prazoEmMeses,Convenio,Convenios);
+                var resultado = validacao.Validar(cliente, agente,tipoOperacao,valorOperacao,prazoEmMeses,Convenio,Convenios);
                 if (resultado.IsFailure)
                     return Result.Failure<Proposta>(resultado.Error);
             }
 
             var proposta = new Proposta
             {
-                IdAgente = Agente.Value.Id,
+                IdAgente = agente.Value.Id,
                 IdCliente = cliente.Value.Id,
-                IdOperacao = Operacao.Value.Id,
+                TipoOperacao = tipoOperacao,
+                DataCadastro = DateTime.Now,
+                Valor = valorOperacao,
+                PrazoEmMeses = prazoEmMeses,
+                Ativo = true,
                 Id = Guid.NewGuid()
             };
 
@@ -61,16 +60,16 @@ namespace HttpService.Dominio.Entidades
 
     public interface IValidacaoProposta
     {
-        Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+        Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao,
             int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios);
     }
 
     public class ValidacaoConveniadaREFIN : IValidacaoProposta
     {
-        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao,
             int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
-            if (!Convenio.Value.AceitaREFIN && codigoOperacao == "REFIN")
+            if (!Convenio.Value.AceitaREFIN && tipoOperacao == TipoOperacaoEnum.REFIN)
                 return Result.Failure("Conveniada não aceita REFIN.");
             return Result.Success();
         }
@@ -78,7 +77,7 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoRestricaoConvenios : IValidacaoProposta
     {
-        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, 
             int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
             if (Convenio.Value.ConvenioRestricoes is null && 
@@ -90,7 +89,7 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoQuantidadeParcelasMaiorQue80AnosCliente : IValidacaoProposta
     {
-        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao, string codigoOperacao,
+        public Result Validar(Maybe<Cliente> Cliente, Maybe<Agente> Agente, TipoOperacaoEnum tipoOperacao, decimal valorOperacao,
             int prazoEmMeses, Maybe<Convenio> Convenio, ICollection<Convenio> Convenios)
         {
             var dataPrazoEmMeses = DateTime.Now.AddMonths(prazoEmMeses);

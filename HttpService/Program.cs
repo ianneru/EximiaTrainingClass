@@ -1,3 +1,5 @@
+using EscolaEximia.HttpService.Dominio.Inscricoes.Infra;
+using EscolaEximia.HttpService.Handlers;
 using HttpService.Dominio;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,8 +14,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PropostaDBContext>(options =>
        options.UseSqlServer(builder.Configuration.GetConnectionString("InscricoesConnection")));
-builder.Services.AddScoped<InscricoesRepositorio>();
-builder.Services.AddScoped<RealizarInscricaoHandler>();
+builder.Services.AddScoped<CriarPropostaHandler>();
+builder.Services.AddScoped<PropostaRepositorio>();
+builder.Services.AddScoped<AgenteRepositorio>();
+builder.Services.AddScoped<ClienteRepositorio>();
+builder.Services.AddScoped<ConvenioRepositorio>();
 //builder.Services.AddHostedService<DatabaseInitializer>();
 
 var app = builder.Build();

@@ -52,7 +52,6 @@ public class CriarPropostaHandler
             agenteRecuperado,
             command.TipoOperacaoEnum,
             command.ValorOperacao,
-            command.CodigoOperacao,
             command.PrazoEmMeses,
             convenioRecuperado,
             convenios

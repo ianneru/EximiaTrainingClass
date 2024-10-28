@@ -9,7 +9,6 @@ public class CriarPropostaCommand
     public string CpfCliente { get; set; }
 
     public Cliente Cliente { get; set; }
-    public string CodigoOperacao { get; set; }
     public string CodigoConvenio { get; set; }
 
     public int PrazoEmMeses { get; set; }
@@ -18,8 +17,8 @@ public class CriarPropostaCommand
     public TipoOperacaoEnum TipoOperacaoEnum { get; }
     public Proposta Proposta { get; set; }
 
-    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep,string Numero,string Logradouro,string Cidade,UfEnum Uf,
-        string Complemento,string Agencia,string Banco,string NumeroConta, decimal ValorRendimento, string CodigoOperacao, string CodigoConvenio, int PrazoEmMeses,
+    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep,string Numero,string Logradouro,string Cidade,string Bairro,UfEnum Uf,
+        string Complemento,string Agencia,string Banco,string NumeroConta, decimal ValorRendimento, string CodigoConvenio, int PrazoEmMeses,
         decimal ValorOperacao,DateTime DataNascimento,TipoOperacaoEnum tipoOperacaoEnum)
     {
         this.CpfAgente = CpfAgente;
@@ -33,6 +32,7 @@ public class CriarPropostaCommand
             Cidade = Cidade,
             Numero = Numero,
             Logradouro = Logradouro,
+            Bairro = Bairro,
             Uf  = Uf,
             Agencia = Agencia,
             Banco = Banco,
@@ -41,7 +41,6 @@ public class CriarPropostaCommand
             ValorRendimento = ValorRendimento
         };
         this.CpfCliente = CpfCliente;
-        this.CodigoOperacao = CodigoOperacao;
         this.CodigoConvenio = CodigoConvenio;
         this.PrazoEmMeses = PrazoEmMeses;
         this.ValorOperacao = ValorOperacao;
