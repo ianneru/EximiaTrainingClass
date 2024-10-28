@@ -15,14 +15,14 @@ public class CriarPropostaCommand
     public string CodigoOperacao { get; set; }
     public string CodigoConvenio { get; set; }
 
-    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, Endereco Endereco,
+    public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, Endereco EnderecoModel,
          Rendimento RendimentoModel,string codigoOperacao, string codigoConvenio)
     {
         this.CpfAgente = CpfAgente;
         this.CpfCliente = CpfCliente;
         this.Telefone = Telefone;
         this.Email = Email;
-        this.Endereco = Endereco;
+        Endereco = EnderecoModel;
         this.CodigoOperacao = codigoOperacao;
         this.CodigoConvenio = codigoConvenio;
         Rendimento = RendimentoModel;

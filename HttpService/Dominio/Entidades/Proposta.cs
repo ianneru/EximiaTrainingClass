@@ -22,10 +22,12 @@ namespace HttpService.Dominio.Entidades
         public bool Ativo { get; set; }
 
 
-        public static Result<Proposta> Criar(string CpfAgente, string CpfCliente, string Telefone, string Email, string Cep, string Numero,
-            string Logradouro, string? Complemento, string Cidade, UfEnum Uf)
+        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,Agente Agente, Operacao Operacao)
         {
-
+            if(Cliente is null) return Result.Failure<Proposta>("Cliente inválido");
+            if (Endereco is null) return Result.Failure<Proposta>("Endereço inválido");
+            if (Agente is null) return Result.Failure<Agente>("Cliente inválido");
+            if (Operacao is null) return Result.Failure<Operacao>("Cliente inválido");
 
         }
     }

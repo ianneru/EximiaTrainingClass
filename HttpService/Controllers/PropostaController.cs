@@ -9,7 +9,7 @@ namespace HttpService.Controllers
     [Route("[controller]")]
     public class PropostaController : ControllerBase
     {
-        public record RendimentoModel(string Banco,string NumeroConta,string Agencia, decimal Valor);
+        public record RendimentoModel(string Banco,string NumeroConta,string Agencia, decimal Valor,TipoContaEnum TipoConta);
 
         public record EnderecoModel(string Cep, string Numero,string Logradouro, string Complemento,string Cidade, UfEnum Uf);
         public record NovaPropostaModel(string CpfAgente, string CpfCliente, string Telefone, string Email, EnderecoModel Endereco, RendimentoModel Rendimento);
