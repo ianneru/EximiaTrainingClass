@@ -28,7 +28,15 @@ public class CriarPropostaHandler
         if (await _agenteRepositorio.AgenteAtivo(command.CpfAgente))
             return Result.Failure<Proposta>("Agente deve estar ativo");
 
-        var propostaResult = Proposta.Criar(command.Aluno, alunoResult.Value, turmaResult.Value, command.Responsavel);
+        var propostaResult = Proposta.Criar(command.Cliente,command.Endereco,command.CpfAgente,
+            new Operacao { 
+                Codigo = command.CodigoOperacao, 
+                Valor = command.ValorOperacao
+            },
+            new Convenio
+            {
+
+            });
         
         if (propostaResult.IsFailure)
             return Result.Failure<Proposta>(propostaResult.Error);
