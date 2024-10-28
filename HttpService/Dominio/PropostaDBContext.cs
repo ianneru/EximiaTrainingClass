@@ -13,6 +13,7 @@ namespace HttpService.Dominio
         public DbSet<Rendimento> Rendimentos { get; set; }
         public DbSet<Agente> Agentes { get; set; }
 
+        public DbSet<Convenio> Convenios { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             try

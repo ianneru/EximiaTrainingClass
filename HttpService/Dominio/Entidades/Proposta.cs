@@ -22,7 +22,7 @@ namespace HttpService.Dominio.Entidades
         public bool Ativo { get; set; }
 
 
-        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,string CpfAgente, Operacao Operacao,Convenio Convenio)
+        public static Result<Proposta> Criar(Cliente Cliente, Endereco Endereco,string CpfAgente, Operacao Operacao,Convenio Convenio,ICollection<Convenio> Convenios)
         {
             if(Cliente is null) return Result.Failure<Proposta>("Cliente inválido");
             if (Endereco is null) return Result.Failure<Proposta>("Endereço inválido");
@@ -52,12 +52,12 @@ namespace HttpService.Dominio.Entidades
 
     public interface IValidacaoProposta
     {
-        Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio);
+        Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio, ICollection<Convenio> Convenios);
     }
 
     public class ValidacaoConveniadaREFIN : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio)
+        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio, ICollection<Convenio> Convenios)
         {
             if (!Convenio.AceitaREFIN && Operacao.Codigo == "REFIN")
                 return Result.Failure("Conveniada não aceita REFIN.");
@@ -67,9 +67,9 @@ namespace HttpService.Dominio.Entidades
 
     public class ValidacaoRestricaoConvenios : IValidacaoProposta
     {
-        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio)
+        public Result Validar(Cliente Cliente, Endereco Endereco, string CpfAgente, Operacao Operacao, Convenio Convenio, ICollection<Convenio> Convenios)
         {
-            if (Convenio.ConvenioRestricoes is null && Convenio.ConvenioRestricoes.Any(restricao=> restricao.Uf == Endereco.Uf && Operacao.Valor > restricao.Valor)
+            if (Convenio.ConvenioRestricoes is null && Convenio.ConvenioRestricoes.Any(restricao => restricao.Uf == Endereco.Uf && Operacao.Valor > restricao.Valor))
                 return Result.Failure("Conveniada não aceita REFIN.");
             return Result.Success();
         }
