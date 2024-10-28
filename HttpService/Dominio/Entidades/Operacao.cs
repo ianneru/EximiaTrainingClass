@@ -5,5 +5,7 @@
         public string Codigo { get; set; }
 
         public decimal Valor {  get; set; }
+
+        public int PrazoEmMeses { get; set; }
     }
 }

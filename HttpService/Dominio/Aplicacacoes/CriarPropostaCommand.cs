@@ -20,14 +20,15 @@ public class CriarPropostaCommand
     public Proposta Proposta { get; set; }
 
     public CriarPropostaCommand(string CpfAgente, string CpfCliente, string Telefone, string Email, Endereco EnderecoModel,
-         Rendimento RendimentoModel,string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,decimal ValorOperacao)
+         Rendimento RendimentoModel,string CodigoOperacao, string CodigoConvenio,string PrazoEmMeses,decimal ValorOperacao,DateTime DataNascimento)
     {
         this.CpfAgente = CpfAgente;
         this.Cliente = new Cliente
         {
             Cpf = CpfCliente ,
             Telefone = Telefone,
-            Email = Email
+            Email = Email,
+            DataNascimento = DataNascimento
         };
         this.CpfCliente = CpfCliente;
         Endereco = EnderecoModel;
